@@ -379,12 +379,15 @@ def registrar_merma_producto():
         if cantidad > float(fila['existencia']):
             return jsonify({'exito': False, 'mensaje': f"Solo hay {float(fila['existencia']):g} en existencia"}), 400
 
-        cursor.execute("INSERT INTO mermas (id_producto, cantidad, motivo) VALUES (%s, %s, %s)",
+                cursor.execute("INSERT INTO mermas (id_producto, cantidad, motivo) VALUES (%s, %s, %s)",
                        (id_producto, cantidad, motivo))
-        cursor.execute("UPDATE productos SET existencia = existencia - %s WHERE id_producto = %s",
-                       (cantidad, id_producto))
+        id_merma = cursor.lastrowid
+        nueva_existencia = round(float(fila['existencia']) - cantidad, 3)
+        cursor.execute("UPDATE productos SET existencia = %s WHERE id_producto = %s",
+                       (nueva_existencia, id_producto))
         mysql.connection.commit()
-        return jsonify({'exito': True, 'mensaje': 'Merma registrada'}), 201
+        return jsonify({'exito': True, 'mensaje': 'Merma registrada',
+                        'id_merma': id_merma, 'existencia': nueva_existencia}), 201
     except ErrorValidacion as e:
         return jsonify({'exito': False, 'mensaje': e.mensaje}), e.codigo
     except Exception as e:
