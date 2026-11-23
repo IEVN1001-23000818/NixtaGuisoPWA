@@ -7,6 +7,7 @@ import { Parada, Repartidor, Ruta } from '../../../interfaces/admin';
 import { NOMBRE_ESTADO } from '../../../interfaces/pedidos';
 import { COLORES_RUTA, MapaRutas } from '../../../componentes/mapa-rutas/mapa-rutas';
 import { dentroDeLeon } from '../../../utilidades/mapa';
+import { hoyLocal } from '../../../utilidades/fechas';
 
 @Component({
   selector: 'app-rutas',
@@ -17,7 +18,7 @@ export class Rutas implements OnInit {
   private admin = inject(AdminService);
   private avisos = inject(AvisosService);
 
-  fecha = new Date().toISOString().slice(0, 10);
+  fecha = hoyLocal();
   rutas = signal<Ruta[]>([]);
   sinAsignar = signal<Parada[]>([]);
   sinUbicacion = signal(0);

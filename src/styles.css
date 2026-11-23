@@ -22,17 +22,18 @@ body {
    Pantallas avanzadas del panel (indicadores, reportes, pedidos, rutas...)
    ===================================================================== */
 @theme {
-  --color-nixta-naranja: #F5AF41;   /* encabezados y barra de navegación */
-  --color-nixta-crema: #EFEDD2;     /* fondo de las pantallas */
-  --color-nixta-verde: #10733B;     /* botones principales */
-  --color-nixta-cafe: #593936;      /* títulos y texto */
-  --color-nixta-dorado: #C08E46;    /* botones secundarios y detalles */
-  --color-nixta-amarillo: #F8E330;  /* alertas y avisos */
+  /* Pantallas del panel con la paleta del equipo (crema, maíz, cacao, milpa y salsa) */
+  --color-nixta-naranja: #F2A922;   /* maíz */
+  --color-nixta-crema: #F6F4DD;     /* crema */
+  --color-nixta-verde: #3B6E3C;     /* milpa */
+  --color-nixta-cafe: #4E342E;      /* cacao */
+  --color-nixta-dorado: #C9963C;    /* maíz tostado */
+  --color-nixta-amarillo: #F7D27A;  /* maíz claro */
 
 }
 
 @layer components {
-  .tarjeta { @apply bg-white rounded-3xl shadow-md p-5; }
+  .tarjeta { @apply bg-white rounded-3xl border border-cacao/10 shadow-xs p-5 text-cacao; }
   .titulo-seccion { @apply text-lg font-extrabold; }
   .etiqueta { @apply block text-sm font-semibold mb-1; }
   .campo { @apply w-full rounded-2xl bg-white px-4 py-3 outline-none border-2 border-transparent focus:border-nixta-naranja transition; }
@@ -54,7 +55,7 @@ body {
 /* Marcadores de Leaflet hechos con HTML (no necesitan imágenes) */
 .marcador-mapa { background: transparent; border: none; }
 
-/* Íconos de Google (Material Symbols) de las pantallas avanzadas del panel */
+/* Íconos de Google (Material Symbols) */
 .material-symbols-rounded {
   font-family: 'Material Symbols Rounded';
   font-weight: normal;

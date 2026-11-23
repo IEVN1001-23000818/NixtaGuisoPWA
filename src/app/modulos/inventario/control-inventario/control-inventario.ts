@@ -101,7 +101,8 @@ export class ControlInventario implements OnInit {
           resp.mermas.map((m) => ({
             id: m.id_merma,
             fecha: m.fecha,
-            producto: (m as any).producto || 'Producto en inventario',            cantidadPerdida: `${m.cantidad}`,
+            producto: (m as any).producto || 'Producto en inventario',
+            cantidadPerdida: `${m.cantidad}`,
             motivo: m.motivo,
           }))
         );
@@ -246,8 +247,7 @@ export class ControlInventario implements OnInit {
 
       this.mensajeEstado.set(`Merma de ${cant} registrada para ${nombreProd}.`);
       this.cantidadMerma = null;
-        } catch (e: any) {
-      // Si Flask respondió (por ejemplo, "Solo hay 0 en existencia"), se muestra su mensaje
+    } catch (e: any) {
       this.errorMensaje.set(
         e?.status ? (e?.error?.mensaje || 'No se pudo registrar la merma.') : 'No se pudo conectar con el servidor.'
       );

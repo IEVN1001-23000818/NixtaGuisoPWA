@@ -57,7 +57,8 @@ def armar_producto(f):
         'imagen_url': f['imagen_url'],
         'es_paquete': bool(f['es_paquete']),
         'disponible': bool(f['disponible']),
-        'activo': bool(f['activo'])
+        'activo': bool(f['activo']),
+        'agotado': (not f['disponible']) or (not f['es_paquete'] and float(f['existencia'] or 0) <= 0)
     }
 
 
@@ -79,7 +80,7 @@ def listar_catalogo():
     cursor = None
     try:
         es_admin = session.get('rol') == 'admin'
-        filtro = 'WHERE p.activo = 1' if es_admin else 'WHERE p.activo = 1 AND p.disponible = 1'
+        filtro = 'WHERE p.activo = 1'   # los pausados también se muestran, marcados como agotados
         cursor = mysql.connection.cursor()
         cursor.execute(f"{CONSULTA_PRODUCTOS} {filtro} ORDER BY p.es_paquete, c.orden, p.id_producto")
         return jsonify({'exito': True, 'productos': [armar_producto(f) for f in cursor.fetchall()]}), 200
@@ -379,7 +380,7 @@ def registrar_merma_producto():
         if cantidad > float(fila['existencia']):
             return jsonify({'exito': False, 'mensaje': f"Solo hay {float(fila['existencia']):g} en existencia"}), 400
 
-                cursor.execute("INSERT INTO mermas (id_producto, cantidad, motivo) VALUES (%s, %s, %s)",
+        cursor.execute("INSERT INTO mermas (id_producto, cantidad, motivo) VALUES (%s, %s, %s)",
                        (id_producto, cantidad, motivo))
         id_merma = cursor.lastrowid
         nueva_existencia = round(float(fila['existencia']) - cantidad, 3)

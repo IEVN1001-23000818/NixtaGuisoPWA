@@ -76,6 +76,9 @@ export class PedidosService {
         cantidad: i.cantidad,
         precio_unitario: i.producto.precio,
         nota_especial: i.notaEspecial,
+        salsa: i.salsa ?? null,
+        agua: i.agua ?? null,
+        arma: i.arma ?? null,
       })),
     };
 

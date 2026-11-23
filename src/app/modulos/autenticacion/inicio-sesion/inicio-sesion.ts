@@ -40,7 +40,6 @@ export class InicioSesion {
         await this.router.navigate(['/inicio']);
       }
     } catch (e: any) {
-      // Si Flask respondió (por ejemplo, 401 por contraseña incorrecta), se muestra su mensaje
       this.errorMensaje.set(
         e?.status ? (e?.error?.mensaje || 'Correo o contraseña incorrectos') : 'No se pudo conectar con el servidor'
       );

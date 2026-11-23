@@ -6,6 +6,26 @@ export interface ItemCarrito {
   producto: ProductoCatalogo;
   cantidad: number;
   notaEspecial: string;
+  // Solo paquetes "Comida Completa": salsa y agua elegidas
+  salsa?: number | null;
+  agua?: number | null;
+  opcionesTexto?: string;
+  // "Arma tu Comida Completa": productos elegidos
+  arma?: ArmaPaquete;
+}
+
+export interface ArmaPaquete {
+  tortilla: number;
+  guisado: number;
+  salsa: number;
+  agua: number;
+  texto: string;
+}
+
+export interface OpcionesPaquete {
+  salsa: number | null;
+  agua: number | null;
+  texto: string;
 }
 
 export interface DatosEntrega {
@@ -73,7 +93,7 @@ export class CarritoService {
     }
     this.esperaCalculo = setTimeout(() => {
       this.http.post<CalculoServidor>('http://localhost:5000/api/pedidos/calcular', {
-        productos: items.map((i) => ({ id_producto: i.producto.id, cantidad: i.cantidad })),
+        productos: items.map((i) => ({ id_producto: i.producto.id, cantidad: i.cantidad, salsa: i.salsa, agua: i.agua, arma: i.arma })),
         modalidad: 'domicilio',
       }, { withCredentials: true }).subscribe({
         next: (r) => this.calculo.set(r),
@@ -117,11 +137,16 @@ export class CarritoService {
     return [d.calle, d.colonia, d.ciudad].map((v) => v?.trim()).filter(Boolean).join(', ');
   });
 
-  agregarProducto(producto: ProductoCatalogo, cantidad = 1, notaEspecial = ''): void {
+  agregarProducto(producto: ProductoCatalogo, cantidad = 1, notaEspecial = '', opciones?: OpcionesPaquete, arma?: ArmaPaquete): void {
     const notaLimpia = notaEspecial.trim();
+    const salsa = opciones?.salsa ?? null;
+    const agua = opciones?.agua ?? null;
     this.items.update((actual) => {
+      // El mismo paquete con otra salsa u otra agua va en un renglón distinto
       const idx = actual.findIndex(
-        (i) => i.producto.id === producto.id && i.notaEspecial === notaLimpia
+        (i) => i.producto.id === producto.id && i.notaEspecial === notaLimpia &&
+               (i.salsa ?? null) === salsa && (i.agua ?? null) === agua &&
+               JSON.stringify(i.arma ?? null) === JSON.stringify(arma ?? null)
       );
       if (idx >= 0) {
         const copia = [...actual];
@@ -131,7 +156,8 @@ export class CarritoService {
         };
         return copia;
       }
-      return [...actual, { producto, cantidad, notaEspecial: notaLimpia }];
+      return [...actual, { producto, cantidad, notaEspecial: notaLimpia, salsa, agua,
+                           opcionesTexto: arma?.texto ?? opciones?.texto, arma }];
     });
   }
 

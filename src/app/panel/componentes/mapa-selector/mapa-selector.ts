@@ -56,7 +56,7 @@ export class MapaSelector implements AfterViewInit, OnDestroy {
     if (this.punto) {
       this.punto.setLatLng([lat, lng]);
     } else if (this.mapa) {
-      this.punto = L.marker([lat, lng], { icon: marcador('#10733B', '📍', 36) }).addTo(this.mapa);
+      this.punto = L.marker([lat, lng], { icon: marcador('#3B6E3C', '📍', 36) }).addTo(this.mapa);
     }
     if (avisar) this.cambio.emit({ latitud: Number(lat.toFixed(6)), longitud: Number(lng.toFixed(6)) });
   }

@@ -17,6 +17,7 @@ from blueprints.admin_despacho.routes import admin_despacho_bp
 from blueprints.admin_inventario.routes import admin_inventario_bp
 from blueprints.admin_dashboard.routes import admin_dashboard_bp
 from blueprints.pantallas.routes import pantallas_bp
+from blueprints.admin_extra.routes import admin_extra_bp
 
 
 app = Flask(__name__)
@@ -46,6 +47,7 @@ app.register_blueprint(admin_despacho_bp)
 app.register_blueprint(admin_inventario_bp)
 app.register_blueprint(admin_dashboard_bp)
 app.register_blueprint(pantallas_bp)   # rutas de las pantallas del frontend
+app.register_blueprint(admin_extra_bp)  # panel administrativo rediseñado
 
 
 # FOTOS DE PRODUCTOS (públicas, para mostrarlas en el catálogo)

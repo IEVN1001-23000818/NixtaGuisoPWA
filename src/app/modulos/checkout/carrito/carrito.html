@@ -30,6 +30,9 @@
                   <div class="min-w-0">
                     <h2 class="text-sm lg:text-base font-extrabold text-cacao truncate">{{ item.producto.nombre }}</h2>
                     <p class="text-xs text-cacao/65">{{ item.producto.unidad }} · ${{ item.producto.precio }} MXN c/u</p>
+                    @if (item.opcionesTexto) {
+                      <p class="text-[11px] text-cacao/70 font-semibold truncate mt-0.5">Con {{ item.opcionesTexto }}</p>
+                    }
                     @if (item.notaEspecial) {
                       <p class="text-[11px] text-milpa font-semibold truncate mt-0.5">Nota: {{ item.notaEspecial }}</p>
                     }

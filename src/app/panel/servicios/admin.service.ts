@@ -103,4 +103,23 @@ export class AdminService {
     return this.http.get<Respuesta & { fecha: string; rutas: Ruta[]; sin_asignar: Parada[]; pedidos_sin_ubicacion: number }>(`${this.api}/rutas`, { params: this.params({ fecha }) });
   }
   guardarOrden(id_repartidor: number, pedidos: number[]): R<{}> { return this.http.put<Respuesta>(`${this.api}/rutas/orden`, { id_repartidor, pedidos }); }
+
+  // ---------- Panel rediseñado (blueprint admin_extra) ----------
+  contadores(): Observable<any> { return this.http.get(`${this.api}/contadores`); }
+  buscar(q: string): Observable<any> { return this.http.get(`${this.api}/buscar`, { params: this.params({ q }) }); }
+  kilosCanal(dias = 6, fecha?: string): Observable<any> { return this.http.get(`${this.api}/kilos-canal`, { params: this.params({ dias, fecha }) }); }
+  planKilos(): Observable<any> { return this.http.get(`${this.api}/plan-kilos`); }
+  consumoCliente(id: number): Observable<any> { return this.http.get(`${this.api}/clientes/${id}/consumo`); }
+  receta(id: number): Observable<any> { return this.http.get(`${this.api}/recetas/${id}`); }
+  editarReceta(id: number, datos: any): R<{}> { return this.http.put<Respuesta>(`${this.api}/recetas/${id}`, datos); }
+  editarGasto(id: number, datos: Partial<Gasto>): R<{}> { return this.http.put<Respuesta>(`${this.api}/gastos-mercadeo/${id}`, datos); }
+  anularCompra(id: number): R<{}> { return this.http.delete<Respuesta>(`${this.api}/compras/${id}`); }
+  anularProduccion(id: number): R<{}> { return this.http.delete<Respuesta>(`${this.api}/producciones/${id}`); }
+  anularMerma(id: number): R<{}> { return this.http.delete<Respuesta>(`${this.api}/mermas/${id}`); }
+  categorias(): Observable<any> { return this.http.get(`${environment.apiUrl}/api/categorias`); }
+  programacionesActivas(): Observable<any> { return this.http.get(`${environment.apiUrl}/api/programaciones`); }
+  // Producto terminado (rutas de las pantallas)
+  productoTerminado(): Observable<any> { return this.http.get(`${environment.apiUrl}/api/inventario/productos`); }
+  reabastecer(id_producto: number, cantidad: number): R<{}> { return this.http.post<Respuesta>(`${environment.apiUrl}/api/inventario/reabastecer`, { id_producto, cantidad }); }
+  ajustarExistencia(id_producto: number, existencia: number): R<{}> { return this.http.put<Respuesta>(`${environment.apiUrl}/api/inventario/productos/${id_producto}`, { existencia }); }
 }

@@ -1,24 +1,74 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Subject, Subscription, debounceTime, filter, switchMap, of } from 'rxjs';
 
+import { AdminService } from '../servicios/admin.service';
 import { BarraSuperior } from '../../compartidos/barra-superior/barra-superior';
 import { MenuLateral } from '../../compartidos/menu-lateral/menu-lateral';
+import { AuthRolService } from '../../servicios/auth-rol.service';
 
 /**
- * Marco de las pantallas avanzadas del panel (indicadores, reportes, pedidos,
- * rutas, repartidores, producción y ficha del cliente), con la barra superior
- * y el menú lateral del diseño del equipo.
+ * Marco del panel administrativo con la barra superior y el menú lateral del equipo,
+ * más buscador de pedidos, clientes y productos, campana de avisos y accesos rápidos.
  */
 @Component({
   selector: 'app-marco-admin',
-  imports: [RouterOutlet, BarraSuperior, MenuLateral],
-  template: `
-    <div class="min-h-screen bg-crema pb-16">
-      <app-barra-superior (abrirMenu)="menuAbierto = true" />
-      <main class="max-w-6xl mx-auto px-4 lg:px-8 pt-6 lg:pt-10"><router-outlet /></main>
-      <app-menu-lateral [abierto]="menuAbierto" (cerrar)="menuAbierto = false" />
-    </div>`
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, FormsModule, BarraSuperior, MenuLateral],
+  templateUrl: './marco-admin.html'
 })
-export class MarcoAdmin {
+export class MarcoAdmin implements OnInit, OnDestroy {
+  private admin = inject(AdminService);
+  private auth = inject(AuthRolService);
+  private router = inject(Router);
+
   menuAbierto = false;
+  avisosAbiertos = signal(false);
+  contadores = signal<any>({ insumos_por_surtir: 0, pedidos_activos: 0, avisos: [] });
+  textoBusqueda = '';
+  resultados = signal<any[]>([]);
+  private busqueda$ = new Subject<string>();
+  private suscripciones: Subscription[] = [];
+
+  menu = [
+    { ruta: '/admin/panel', texto: 'Panel operativo', contador: '' },
+    { ruta: '/admin/menu', texto: 'Gestión de menú', contador: '' },
+    { ruta: '/admin/inventario', texto: 'Inventario y producción', contador: 'insumos_por_surtir' },
+    { ruta: '/admin/crm', texto: 'Clientes (CRM)', contador: '' },
+    { ruta: '/admin/logistica', texto: 'Logística y despacho', contador: 'pedidos_activos' },
+    { ruta: '/admin/reportes', texto: 'Reportes y KPIs', contador: '' }
+  ];
+
+  ngOnInit(): void {
+    this.cargarContadores();
+    // Los contadores se actualizan cada vez que se cambia de pantalla
+    this.suscripciones.push(this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
+      this.cargarContadores();
+      this.menuAbierto = false;
+    }));
+    this.suscripciones.push(this.busqueda$.pipe(
+      debounceTime(250),
+      switchMap(q => q.trim().length < 2 ? of({ resultados: [] }) : this.admin.buscar(q.trim()))
+    ).subscribe(r => this.resultados.set(r.resultados ?? [])));
+  }
+
+  cargarContadores(): void {
+    this.admin.contadores().subscribe({ next: c => this.contadores.set(c), error: () => {} });
+  }
+
+  buscar(texto: string): void { this.busqueda$.next(texto); }
+
+  abrirResultado(r: any): void {
+    this.textoBusqueda = '';
+    this.resultados.set([]);
+    const parametro = r.tipo === 'Pedido' ? { pedido: r.id } : r.tipo === 'Cliente' ? { cliente: r.id } : { producto: r.id };
+    this.router.navigate([r.ruta], { queryParams: parametro });
+  }
+
+  irAviso(a: any): void {
+    this.avisosAbiertos.set(false);
+    this.router.navigate([a.ruta]);
+  }
+
+  ngOnDestroy(): void { this.suscripciones.forEach(s => s.unsubscribe()); }
 }

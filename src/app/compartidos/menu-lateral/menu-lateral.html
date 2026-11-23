@@ -39,30 +39,6 @@
             </a>
 
             <a
-              routerLink="/admin/indicadores"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Indicadores y gráfica
-            </a>
-
-            <a
-              routerLink="/admin/reportes"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Reportes y metas
-            </a>
-
-            <a
-              routerLink="/admin/pedidos"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Pedidos y pagos
-            </a>
-
-            <a
               routerLink="/admin/menu"
               (click)="cerrarMenu()"
               class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
@@ -75,39 +51,7 @@
               (click)="cerrarMenu()"
               class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
             >
-              Inventario e insumos
-            </a>
-
-            <a
-              routerLink="/admin/logistica"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Logística y entregas
-            </a>
-
-            <a
-              routerLink="/admin/rutas"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Mapa de rutas
-            </a>
-
-            <a
-              routerLink="/admin/repartidores"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Repartidores
-            </a>
-
-            <a
-              routerLink="/admin/produccion"
-              (click)="cerrarMenu()"
-              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
-            >
-              Producción e insumos
+              Inventario y producción
             </a>
 
             <a
@@ -115,16 +59,25 @@
               (click)="cerrarMenu()"
               class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
             >
-              Clientes CRM
+              Clientes (CRM)
             </a>
 
             <a
-              routerLink="/perfil"
+              routerLink="/admin/logistica"
               (click)="cerrarMenu()"
               class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
             >
-              Mi perfil
+              Logística y despacho
             </a>
+
+            <a
+              routerLink="/admin/reportes"
+              (click)="cerrarMenu()"
+              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
+            >
+              Reportes y KPIs
+            </a>
+
           </nav>
         } @else {
           <nav class="mt-6 flex flex-col space-y-2">
@@ -134,6 +87,14 @@
               class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
             >
               Configuración
+            </a>
+
+            <a
+              routerLink="/arma-tu-paquete"
+              (click)="cerrarMenu()"
+              class="px-4 py-3 rounded-2xl text-base font-extrabold text-cacao hover:bg-maiz/20 transition"
+            >
+              Arma tu paquete
             </a>
 
             <a

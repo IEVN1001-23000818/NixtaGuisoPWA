@@ -4,7 +4,7 @@ import * as L from 'leaflet';
 import { Parada, Ruta } from '../../interfaces/admin';
 import { CENTRO_LEON, capaMapa, marcador } from '../../utilidades/mapa';
 
-export const COLORES_RUTA = ['#10733B', '#C08E46', '#593936', '#2563EB', '#DB2777', '#7C3AED'];
+export const COLORES_RUTA = ['#3B6E3C', '#C08E46', '#593936', '#2563EB', '#DB2777', '#7C3AED'];
 
 /**
  * Mapa del panel: cada repartidor con su color, paradas numeradas y la línea del recorrido.
@@ -62,7 +62,7 @@ export class MapaRutas implements AfterViewInit, OnDestroy {
       if (p.latitud == null || p.longitud == null) continue;
       const punto: L.LatLngTuple = [p.latitud, p.longitud];
       puntos.push(punto);
-      L.marker(punto, { icon: marcador('#F5AF41', '•', 28) })
+      L.marker(punto, { icon: marcador('#F2A922', '•', 28) })
         .bindPopup(`<b>#${p.id_pedido} · ${p.cliente}</b><br>Sin repartidor asignado`).addTo(this.capa);
     }
 

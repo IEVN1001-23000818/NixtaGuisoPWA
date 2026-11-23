@@ -4,7 +4,6 @@ __pycache__/
 *.pyc
 flask/.env
 flask/uploads/comprobantes/
-
 # Angular / Node
 angular/**/node_modules/
 angular/**/dist/

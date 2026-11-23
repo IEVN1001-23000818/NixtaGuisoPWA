@@ -213,6 +213,7 @@ CREATE TABLE detalle_pedido (
   cantidad        DECIMAL(10,3) NOT NULL,
   precio_unitario DECIMAL(10,2) NOT NULL,
   subtotal        DECIMAL(10,2) NOT NULL,
+  opciones        VARCHAR(200) NULL,          -- paquetes: salsa y agua elegidas ("10,14|Salsa verde y Agua de horchata")
   CONSTRAINT fk_detped_pedido   FOREIGN KEY (id_pedido)   REFERENCES pedidos(id_pedido) ON DELETE CASCADE,
   CONSTRAINT fk_detped_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto),
   CONSTRAINT ck_detped_valores CHECK (cantidad > 0 AND precio_unitario >= 0 AND subtotal >= 0)
@@ -387,9 +388,9 @@ INSERT INTO productos (id_producto, id_categoria, nombre, descripcion, presentac
 (11, 3, 'Guacamole',            'Guacamole fresco de aguacate Hass.',                                         '100 ml', 0.100, 25.00, 22.50, 21.25, 9.00, 125.000),
 (12, 4, 'Queso fresco',         'Queso fresco artesanal de leche entera.',                                    '250 g',  0.250, 45.00, 40.50, 38.25, 22.72, 18.000),
 (13, 4, 'Crema de rancho',      'Crema de rancho sin gomas ni almidones.',                                    '250 ml', 0.250, 38.00, 34.20, 32.30, 19.00, 40.000),
-(14, 5, 'Agua de horchata',     'Agua fresca de arroz con canela.',                                           '1 L',    1.000, 28.00, 25.20, 23.80, 9.49, 23.500),
-(15, 5, 'Agua de jamaica',      'Agua fresca de flor de jamaica natural.',                                    '1 L',    1.000, 28.00, 25.20, 23.80, 9.49, 23.500),
-(16, 5, 'Agua de limón con chía','Agua fresca de limón persa con chía.',                                      '1 L',    1.000, 28.00, 25.20, 23.80, 9.49, 23.500);
+(14, 5, 'Agua de horchata',     'Agua fresca de arroz con canela, endulzada con azúcar.',                                           '1 L',    1.000, 28.00, 25.20, 23.80, 9.49, 23.500),
+(15, 5, 'Agua de jamaica',      'Agua fresca de flor de jamaica, endulzada con azúcar.',                                    '1 L',    1.000, 28.00, 25.20, 23.80, 9.49, 23.500),
+(16, 5, 'Agua de limón con chía','Agua fresca de limón persa con chía, endulzada con azúcar.',                                      '1 L',    1.000, 28.00, 25.20, 23.80, 9.49, 23.500);
 
 -- Paquetes "Comida Completa" (sección 7.3). Solo se vende a clientes Hogar.
 -- Costo = suma del costo de sus componentes.
@@ -502,3 +503,22 @@ INSERT INTO metas (indicador, descripcion, valor_meta, fecha_meta) VALUES
 ('roas',                'Retorno de la inversión publicitaria (ROAS)',       3.00, NULL),
 ('csat',                'Calificación promedio de servicio',                 4.50, NULL),
 ('costo_registro',      'Costo publicitario por registro (MXN, máximo)',    40.00, NULL);
+
+
+-- Costos unitarios de referencia (mayoreo en León, Gto.)
+-- Criterio: punto medio de los rangos cotizados; empaques con tapa incluida
+UPDATE insumos SET costo_unitario = 8.48   WHERE id_insumo = 2;   -- Cal alimentaria (kg)
+UPDATE insumos SET costo_unitario = 32.83  WHERE id_insumo = 4;   -- Manteca / aceite (L)
+UPDATE insumos SET costo_unitario = 23.16  WHERE id_insumo = 7;   -- Papa blanca (kg)
+UPDATE insumos SET costo_unitario = 110.00 WHERE id_insumo = 8;   -- Chorizo (kg)
+UPDATE insumos SET costo_unitario = 30.76  WHERE id_insumo = 13;  -- Verduras y condimentos (kg)
+UPDATE insumos SET costo_unitario = 24.17  WHERE id_insumo = 17;  -- Arroz (kg)
+UPDATE insumos SET costo_unitario = 147.50 WHERE id_insumo = 18;  -- Flor de jamaica (kg)
+UPDATE insumos SET costo_unitario = 37.32  WHERE id_insumo = 19;  -- Limón persa y chía (kg)
+UPDATE insumos SET costo_unitario = 19.37  WHERE id_insumo = 20;  -- Azúcar (kg)
+UPDATE insumos SET costo_unitario = 12.75  WHERE id_insumo = 21;  -- Bolsa biodegradable con QR (pieza)
+UPDATE insumos SET costo_unitario = 2.46   WHERE id_insumo = 22;  -- Envase térmico de 1 L (pieza)
+UPDATE insumos SET costo_unitario = 1.25   WHERE id_insumo = 23;  -- Envase de 100 ml con tapa (pieza)
+UPDATE insumos SET costo_unitario = 2.15   WHERE id_insumo = 24;  -- Envase de 250 ml (pieza)
+UPDATE insumos SET costo_unitario = 3.59   WHERE id_insumo = 25;  -- Empaque para queso (pieza)
+UPDATE insumos SET costo_unitario = 6.00   WHERE id_insumo = 26;  -- Botella de 1 L (pieza)

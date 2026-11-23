@@ -298,13 +298,13 @@ def detalle_pedido_admin(id_pedido):
             return jsonify({'exito': False, 'mensaje': 'El pedido no existe'}), 404
 
         cursor.execute("""
-            SELECT pr.nombre, pr.presentacion, d.cantidad, d.precio_unitario, d.subtotal
+            SELECT pr.nombre, pr.presentacion, d.cantidad, d.precio_unitario, d.subtotal, d.opciones
             FROM detalle_pedido d
             JOIN productos pr ON pr.id_producto = d.id_producto
             WHERE d.id_pedido = %s ORDER BY d.id_detalle
         """, (id_pedido,))
         productos = [{
-            'nombre': d['nombre'],
+            'nombre': d['nombre'] + (f" ({d['opciones'].split('|')[1]})" if d['opciones'] else ''),
             'presentacion': d['presentacion'],
             'cantidad': float(d['cantidad']),
             'precio_unitario': float(d['precio_unitario']),

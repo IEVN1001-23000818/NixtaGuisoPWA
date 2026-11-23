@@ -50,8 +50,7 @@ export class Registro {
       }
 
       await this.router.navigate(['/inicio']);
-      } catch (e: any) {
-      // Si Flask respondió (por ejemplo, 400 "El RFC no es válido"), se muestra su mensaje
+    } catch (e: any) {
       this.errorMensaje.set(
         e?.status ? (e?.error?.mensaje || 'No se pudo crear la cuenta') : 'No se pudo conectar con el servidor'
       );

@@ -132,7 +132,8 @@ def adaptar_formato_pantallas(datos):
     cursor.close()
 
     convertido = {
-        'productos': [{'id_producto': i.get('id_producto'), 'cantidad': i.get('cantidad')} for i in items],
+        'productos': [{'id_producto': i.get('id_producto'), 'cantidad': i.get('cantidad'),
+                       'salsa': i.get('salsa'), 'agua': i.get('agua'), 'arma': i.get('arma')} for i in items],
         'modalidad': 'domicilio',
         'direccion_entrega': datos.get('direccion_entrega', ''),
         'telefono_contacto': (fila or {}).get('telefono') or '',
@@ -323,7 +324,7 @@ def detalle_pedido(id_pedido):
 
         cursor.execute("""
             SELECT d.id_producto, pr.nombre, pr.presentacion, d.cantidad,
-                   d.precio_unitario, d.subtotal
+                   d.precio_unitario, d.subtotal, d.opciones
             FROM detalle_pedido d
             JOIN productos pr ON pr.id_producto = d.id_producto
             WHERE d.id_pedido = %s
@@ -331,7 +332,7 @@ def detalle_pedido(id_pedido):
         """, (id_pedido,))
         productos = [{
             'id_producto': d['id_producto'],
-            'nombre': d['nombre'],
+            'nombre': d['nombre'] + (f" ({d['opciones'].split('|')[1]})" if d['opciones'] else ''),
             'presentacion': d['presentacion'],
             'cantidad': float(d['cantidad']),
             'precio_unitario': float(d['precio_unitario']),

@@ -127,18 +127,33 @@ def listar_programaciones():
         # El administrador (Panel Operativo) ve las programaciones activas de todos
         if session.get('rol') == 'admin':
             cursor.execute("""
-                SELECT pg.id_programacion, pg.tipo, pg.frecuencia, pg.fecha_inicio, pg.estado,
-                       COALESCE(c.nombre_negocio, u.nombre) AS cliente
+                SELECT pg.*, COALESCE(c.nombre_negocio, u.nombre) AS cliente, u.telefono, c.tipo AS tipo_cliente
                 FROM programaciones pg
                 JOIN clientes c ON c.id_cliente = pg.id_cliente
                 JOIN usuarios u ON u.id_usuario = c.id_usuario
                 WHERE pg.estado = 'activa'
                 ORDER BY pg.fecha_inicio
             """)
-            return jsonify({'exito': True, 'programaciones': [{
-                'id_programacion': f['id_programacion'], 'tipo': f['tipo'], 'frecuencia': f['frecuencia'],
-                'fecha_inicio': f['fecha_inicio'].isoformat(), 'estado': f['estado'], 'cliente': f['cliente']
-            } for f in cursor.fetchall()]}), 200
+            programaciones = []
+            for f in cursor.fetchall():
+                cursor.execute("""
+                    SELECT pr.nombre, pr.presentacion, dp.cantidad FROM detalle_programacion dp
+                    JOIN productos pr ON pr.id_producto = dp.id_producto WHERE dp.id_programacion = %s
+                """, (f['id_programacion'],))
+                productos = [{'nombre': x['nombre'], 'presentacion': x['presentacion'], 'cantidad': float(x['cantidad'])}
+                             for x in cursor.fetchall()]
+                programaciones.append({
+                    'id_programacion': f['id_programacion'], 'tipo': f['tipo'], 'frecuencia': f['frecuencia'],
+                    'fecha_inicio': f['fecha_inicio'].isoformat(), 'estado': f['estado'], 'cliente': f['cliente'],
+                    'tipo_cliente': f['tipo_cliente'], 'telefono': f['telefono'],
+                    'proxima_entrega': proxima_entrega(f),
+                    'hora_desde': formato_hora(f['hora_desde']), 'hora_hasta': formato_hora(f['hora_hasta']),
+                    'direccion_entrega': f['direccion_entrega'], 'notas': f['notas'],
+                    'productos': productos,
+                    'resumen': ', '.join(f"{x['cantidad']:g} {x['nombre']}" for x in productos)
+                })
+            programaciones.sort(key=lambda x: x['proxima_entrega'] or '9999')
+            return jsonify({'exito': True, 'programaciones': programaciones}), 200
 
         if session.get('rol') != 'cliente':
             return jsonify({'exito': False, 'mensaje': 'Esta función es solo para clientes'}), 403
@@ -230,7 +245,7 @@ def adaptar_programacion_pantallas(datos):
         hora, hasta = '09:00', '10:00'
     notas = str(datos.get('notas') or '').strip()
     if datos.get('nombre_negocio'):
-        notas = f"Negocio: {str(datos['nombre_negocio']).strip()}. {notas}".strip()
+        notas = f"Evento o negocio: {str(datos['nombre_negocio']).strip()}. {notas}".strip()
     return {
         'tipo': 'automatico',   # negocio si la cuenta es B2B; evento si es Hogar
         'frecuencia': 'semanal' if datos.get('frecuencia') == 'semanal' else 'unica',

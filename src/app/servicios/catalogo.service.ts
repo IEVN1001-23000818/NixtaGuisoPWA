@@ -19,6 +19,7 @@ export interface ProductoCatalogo {
   existencia: number;
   imagenUrl: string | null;
   disponible?: boolean;
+  agotado?: boolean;
 }
 
 interface RespuestaCatalogo {
@@ -401,7 +402,7 @@ export class CatalogoService {
         .filter((fila) => {
           const activo = fila['activo'] === undefined ? true : Boolean(fila['activo']);
           const disponible = fila['disponible'] === undefined ? true : Boolean(fila['disponible']);
-          return activo && (disponible || incluirPausados);
+          return activo;
         })
         .map((fila, idx) => this.normalizarProducto(fila, idx + 1, tipoCuenta, nivelB2b));
     } catch {
@@ -519,6 +520,7 @@ export class CatalogoService {
       descripcion: String(fila['descripcion'] ?? ''),
       existencia: Number(fila['existencia'] ?? 0),
       disponible: fila['disponible'] === undefined ? true : Boolean(fila['disponible']),
+      agotado: Boolean(fila['agotado']),
       imagenUrl: imagenUrlRaw ? String(imagenUrlRaw) : null,
     };
   }
