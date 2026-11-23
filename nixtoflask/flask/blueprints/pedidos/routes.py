@@ -11,6 +11,7 @@ from utils.precios import obtener_tipo_cliente
 from utils.pedidos import ErrorPedido, leer_productos, calcular_pedido, insertar_pedido
 from utils.validaciones import ErrorValidacion
 from utils.ubicacion import leer_ubicacion, a_numero
+from utils.geocodificar import geocodificar
 
 pedidos_bp = Blueprint('pedidos', __name__)
 
@@ -140,8 +141,10 @@ def adaptar_formato_pantallas(datos):
         'metodo_pago': datos.get('metodo_pago', 'tarjeta'),
         'notas': notas[:500],
         'codigo_cupon': datos.get('codigo_cupon'),
-        'usar_saldo': bool(datos.get('usar_saldo', False))
-    }
+        'usar_saldo': bool(datos.get('usar_saldo', False)),
+        'latitud': datos.get('latitud'),
+        'longitud': datos.get('longitud')
+    }    
     return convertido, True
 
 
@@ -183,10 +186,14 @@ def crear_pedido():
         cursor = mysql.connection.cursor()
         tipo, nivel = obtener_tipo_cliente(cursor)
 
-        # UBICACION DE ENTREGA: la marcada en el checkout o la guardada en el perfil
+                # UBICACION DE ENTREGA, en este orden:
+        #   1) la marcada en el mapa  2) la dirección escrita, convertida en coordenadas
+        #   3) la guardada en el perfil  4) ninguna (el administrador la fija en el mapa)
         latitud, longitud = None, None
         if modalidad == 'domicilio':
             latitud, longitud = leer_ubicacion(datos)
+            if latitud is None:
+                latitud, longitud = geocodificar(direccion)
             if latitud is None:
                 cursor.execute(
                     "SELECT latitud, longitud FROM clientes WHERE id_cliente = %s",

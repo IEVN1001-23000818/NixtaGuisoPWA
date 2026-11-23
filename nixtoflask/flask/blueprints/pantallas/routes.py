@@ -14,6 +14,7 @@ from database import mysql
 from utils.seguridad import admin_requerido, cliente_requerido, login_requerido
 from utils.validaciones import ErrorValidacion, texto, numero
 from utils.pedidos import notificar
+from utils.geocodificar import geocodificar
 
 pantallas_bp = Blueprint('pantallas', __name__)
 
@@ -247,6 +248,13 @@ def guardar_direccion():
         direccion = texto(request.get_json(silent=True) or {}, 'direccion', 'Dirección', minimo=5, maximo=255)
         cursor = mysql.connection.cursor()
         cursor.execute("UPDATE clientes SET direccion = %s WHERE id_cliente = %s", (direccion, session['id_cliente']))
+
+        # También se guarda su ubicación en el mapa, si la dirección se encuentra
+        latitud, longitud = geocodificar(direccion)
+        if latitud is not None:
+            cursor.execute("UPDATE clientes SET latitud = %s, longitud = %s WHERE id_cliente = %s",
+                           (latitud, longitud, session['id_cliente']))
+
         mysql.connection.commit()
         return jsonify({'exito': True, 'mensaje': 'Dirección de entrega guardada', 'direccion': direccion}), 200
     except ErrorValidacion as e:
