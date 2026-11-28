@@ -1,6 +1,9 @@
 # NixtaGuiso · PWA
 
-Cocina tradicional con modelo Dark Kitchen en León, Guanajuato. Proyecto final con **Angular 22**, **Flask** y **MySQL**.
+Cortes Dias Angel Azael 23001048
+Mora González Citlali Neftali 23002679
+Mena Villegas Karla Juliana 23000818
+Sandoval Cisneros Teresita De Jesus 23001156
 
 ## Estructura
 
@@ -34,13 +37,13 @@ Laragon (MySQL), Python 3.11, Node.js y Angular CLI 22.
    pip install -r requirements.txt
    copy config.example.py config.py
    ```
-   Escribe tu usuario y contraseña de MySQL en `config.py`.
-3. **Angular** (en la raíz del proyecto):
+   Modifica tu usuario y contraseña de MySQL en el archivo`config.py`.
+3. **Angular** :
    ```cmd
    npm install
    ```
 
-## Ejecutar (cada vez)
+## Ejecutar 
 
 **Terminal 1 (Flask):**
 ```cmd
@@ -63,6 +66,8 @@ Abrir `http://localhost:4200` (usar `localhost`, no `127.0.0.1`).
 | Administrador | admin@nixtaguiso.mx | Admin123* |
 | Cliente Hogar | judith@ejemplo.com | Cliente123* |
 | Cliente Negocio | tacoseltomy@ejemplo.com | Cliente123* |
+| Administrador | admin2@nixtaguiso.mx | Adminz2m |
+
 
 ## Probar la PWA (instalable)
 
